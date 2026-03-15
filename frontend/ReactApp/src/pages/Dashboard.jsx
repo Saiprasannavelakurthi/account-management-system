@@ -18,7 +18,7 @@ function Dashboard(){
       }
     )
     .then((res)=>{
-      setBalance(res.data.balance);
+      setBalance(balance + data.balance);
     });
 
   },[]);

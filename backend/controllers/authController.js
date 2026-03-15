@@ -2,49 +2,60 @@ import bcrypt from "bcryptjs";
 import supabase from "../config/supabaseClient.js";
 import generateToken from "../utils/generateToken.js";
 
-export const signup = async (req,res)=>{
+export const signup = async (req, res) => {
 
-  const {name,email,password} = req.body;
+  const { name, email, password } = req.body;
 
-  const hashed = await bcrypt.hash(password,10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  const {data,error} = await supabase
-  .from("users")
-  .insert([{name,email,password:hashed,balance:10000}])
-  .select()
-  .single();
+  const { data, error } = await supabase
+    .from("users")
+    .insert([
+      {
+        name,
+        email,
+        password: hashedPassword,
+        balance: 10000
+      }
+    ])
+    .select();
 
-  if(error){
-    return res.status(400).json({message:error.message});
+  if (error) {
+    return res.status(400).json({ message: error.message });
   }
 
-  const token = generateToken(data.id);
+  const token = generateToken(data[0].id);
 
-  res.json({token,user:data});
+  res.json({
+    user: data[0],
+    token
+  });
 };
 
+export const login = async (req, res) => {
 
-export const login = async (req,res)=>{
+  const { email, password } = req.body;
 
-  const {email,password} = req.body;
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email)
+    .single();
 
-  const {data,error} = await supabase
-  .from("users")
-  .select("*")
-  .eq("email",email)
-  .single();
-
-  if(!data){
-    return res.status(404).json({message:"User not found"});
+  if (error || !data) {
+    return res.status(400).json({ message: "User not found" });
   }
 
-  const match = await bcrypt.compare(password,data.password);
+  const match = await bcrypt.compare(password, data.password);
 
-  if(!match){
-    return res.status(401).json({message:"Wrong password"});
+  if (!match) {
+    return res.status(400).json({ message: "Invalid password" });
   }
 
   const token = generateToken(data.id);
 
-  res.json({token,user:data});
+  res.json({
+    user: data,
+    token
+  });
 };
