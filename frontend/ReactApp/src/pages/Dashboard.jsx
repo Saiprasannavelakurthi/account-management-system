@@ -1,33 +1,47 @@
-import {useEffect,useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function Dashboard(){
 
-const [balance,setBalance]=useState(0);
+  const [balance,setBalance] = useState(0);
 
-useEffect(()=>{
+  useEffect(()=>{
 
-const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-axios.get("http://localhost:5000/api/account/balance",{
-headers:{Authorization:`Bearer ${token}`}
-})
-.then(res=>setBalance(res.data.balance));
+    axios.get(
+      "http://localhost:5000/api/account/balance",
+      {
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      }
+    )
+    .then((res)=>{
+      setBalance(res.data.balance);
+    });
 
-},[]);
+  },[]);
 
-return(
+  return(
 
-<div>
+    <div>
 
-<h2>Dashboard</h2>
+      <h1>Dashboard</h1>
 
-<h1>Balance: ₹{balance}</h1>
+      <h2>Balance: ₹{balance}</h2>
 
-</div>
+      <br />
 
-);
+      <a href="/send">Send Money</a>
 
+      <br /><br />
+
+      <a href="/statement">Account Statement</a>
+
+    </div>
+
+  )
 }
 
-export default Dashboard;
+export default Dashboard

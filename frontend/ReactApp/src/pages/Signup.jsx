@@ -1,38 +1,52 @@
-import {useState} from "react";
+import { useState } from "react";
 import axios from "axios";
 
-function Signup(){
+function Signup() {
 
-const [name,setName]=useState("");
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-const handleSignup = async()=>{
+  const handleSignup = async () => {
 
-await axios.post("http://localhost:5000/api/auth/signup",{
-name,email,password
-});
+    try {
 
-alert("Signup successful");
+      await axios.post(
+        "http://localhost:5000/api/auth/signup",
+        { name, email, password }
+      );
 
-};
+      alert("Signup successful");
+      window.location.href = "/login";
 
-return(
+    } catch (error) {
+      alert("Signup failed");
+    }
 
-<div>
+  };
 
-<h2>Signup</h2>
+  return (
+    <div>
 
-<input placeholder="Name" onChange={(e)=>setName(e.target.value)}/>
-<input placeholder="Email" onChange={(e)=>setEmail(e.target.value)}/>
-<input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)}/>
+      <h2>Signup</h2>
 
-<button onClick={handleSignup}>Signup</button>
+      <input placeholder="Name" onChange={(e)=>setName(e.target.value)} />
 
-</div>
+      <br /><br />
 
-);
+      <input placeholder="Email" onChange={(e)=>setEmail(e.target.value)} />
 
+      <br /><br />
+
+      <input type="password" placeholder="Password"
+        onChange={(e)=>setPassword(e.target.value)} />
+
+      <br /><br />
+
+      <button onClick={handleSignup}>Signup</button>
+
+    </div>
+  );
 }
 
 export default Signup;

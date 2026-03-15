@@ -1,23 +1,41 @@
-import {useState} from "react";
-import axios from "axios";
+import { useEffect,useState } from "react"
+import axios from "axios"
 
 function SendMoney(){
 
-const [receiverId,setReceiverId]=useState("");
-const [amount,setAmount]=useState("");
+const [users,setUsers] = useState([])
+const [receiver,setReceiver] = useState("")
+const [amount,setAmount] = useState("")
 
-const sendMoney = async()=>{
+useEffect(()=>{
 
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("token")
 
-await axios.post("http://localhost:5000/api/account/transfer",
-{receiverId,amount},
-{headers:{Authorization:`Bearer ${token}`}}
-);
+axios.get(
+"http://localhost:5000/api/account/users",
+{
+headers:{Authorization:`Bearer ${token}`}
+}
+)
+.then(res=>setUsers(res.data))
 
-alert("Transfer success");
+},[])
 
-};
+const handleSend = async ()=>{
+
+const token = localStorage.getItem("token")
+
+await axios.post(
+"http://localhost:5000/api/account/transfer",
+{receiverId:receiver,amount},
+{
+headers:{Authorization:`Bearer ${token}`}
+}
+)
+
+alert("Transfer successful")
+
+}
 
 return(
 
@@ -25,15 +43,29 @@ return(
 
 <h2>Send Money</h2>
 
-<input placeholder="Receiver ID" onChange={(e)=>setReceiverId(e.target.value)}/>
-<input placeholder="Amount" onChange={(e)=>setAmount(e.target.value)}/>
+<select onChange={(e)=>setReceiver(e.target.value)}>
 
-<button onClick={sendMoney}>Send</button>
+<option>Select User</option>
+
+{users.map((u)=>(
+<option key={u.id} value={u.id}>{u.name}</option>
+))}
+
+</select>
+
+<br /><br />
+
+<input placeholder="Amount"
+onChange={(e)=>setAmount(e.target.value)}/>
+
+<br /><br />
+
+<button onClick={handleSend}>Send</button>
 
 </div>
 
-);
+)
 
 }
 
-export default SendMoney;
+export default SendMoney

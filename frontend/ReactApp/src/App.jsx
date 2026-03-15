@@ -1,32 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-import {BrowserRouter,Routes,Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import SendMoney from "./pages/SendMoney";
 import Statement from "./pages/Statement";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
     <BrowserRouter>
+
       <Routes>
-        <Route path="/signup" element={<Signup/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="/send" element={<SendMoney/>}/>
-        <Route path="/statement" element={<Statement/>}/>
+
+        <Route path="/" element={<Signup />} />
+
+        <Route path="/signup" element={<Signup />} />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/send"
+          element={
+            <ProtectedRoute>
+              <SendMoney />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/statement"
+          element={
+            <ProtectedRoute>
+              <Statement />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
-    </BrowserRouter>  
-    </>
-  )
+
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
